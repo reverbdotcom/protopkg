@@ -5,6 +5,7 @@ A declarative protocol buffer package manager. protopkg helps synchronize protoc
 
 ## Installation
 TODO: Add homebrew
+
 With Go 1.11: `go get -u github.com/ebenoist/protopkg`
 
 ## Usage
