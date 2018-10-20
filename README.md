@@ -30,7 +30,6 @@ GLOBAL OPTIONS:
     "google/transit/gtfs-realtime/proto": {
       "path": "protos/gtfs",
       "ref": "db3c001d0c2412825c6911628ded36c583e60f95"
-
     }
   }
 }
