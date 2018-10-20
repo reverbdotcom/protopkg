@@ -11,6 +11,8 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
+
+	"github.com/jtacoma/uritemplates"
 )
 
 type GHFile struct {
@@ -29,7 +31,14 @@ func sync(manifest Manifest) error {
 		parts := strings.SplitN(path, "/", 3)
 
 		go func() {
-			err := visit(parts[2], strings.Join(parts[0:2], "/"), cfg.Path)
+			walker := &GithubWalker{
+				Repo:   strings.Join(parts[0:2], "/"),
+				Target: cfg.Path,
+				Ref:    cfg.Ref,
+			}
+
+			err := walker.Visit(parts[2])
+
 			if err != nil {
 				log.Printf("error! - %s", err)
 			}
@@ -45,8 +54,28 @@ func sync(manifest Manifest) error {
 	return nil
 }
 
-func visit(src string, repo string, target string) error {
-	res, err := callGitHub(fmt.Sprintf("https://api.github.com/repos/%s/contents/%s", repo, src))
+type GithubWalker struct {
+	Repo   string
+	Ref    string
+	Target string
+}
+
+func (w *GithubWalker) Visit(src string) error {
+	tpl, err := uritemplates.Parse("https://api.github.com/repos/{+repo}/contents/{+file}{?ref}")
+	if err != nil {
+		return err
+	}
+
+	path, err := tpl.Expand(map[string]interface{}{
+		"repo": w.Repo,
+		"file": src,
+		"ref":  w.Ref,
+	})
+	if err != nil {
+		return err
+	}
+
+	res, err := callGitHub(path)
 	if err != nil {
 		return err
 	}
@@ -59,19 +88,39 @@ func visit(src string, repo string, target string) error {
 
 	for _, file := range files {
 		if file.Type == "dir" {
-			err := visit(file.Path, repo, target)
+			err := w.Visit(file.Path)
 			if err != nil {
 				return err
 			}
 		}
 
 		if file.Type == "file" {
-			err := downloadFile(file, target)
+			err := w.downloadFile(file)
 			if err != nil {
 				return err
 			}
 		}
 	}
+
+	return nil
+}
+
+func (w *GithubWalker) downloadFile(file GHFile) error {
+	resp, err := callGitHub(file.URL)
+	if err != nil {
+		return err
+	}
+
+	proto := path.Join(w.Target, file.Path)
+	os.MkdirAll(filepath.Dir(proto), os.ModePerm)
+	f, err := os.Create(proto)
+
+	if err != nil {
+		return fmt.Errorf("could not create - %s", err)
+	}
+
+	io.Copy(f, resp)
+	f.Close()
 
 	return nil
 }
@@ -93,27 +142,8 @@ func decodeFile(raw []byte) ([]GHFile, error) {
 	return files, err
 }
 
-func downloadFile(file GHFile, target string) error {
-	resp, err := callGitHub(file.URL)
-	if err != nil {
-		return err
-	}
-
-	proto := path.Join(target, file.Path)
-	os.MkdirAll(filepath.Dir(proto), os.ModePerm)
-	f, err := os.Create(proto)
-
-	if err != nil {
-		return fmt.Errorf("could not create - %s", err)
-	}
-
-	io.Copy(f, resp)
-	f.Close()
-
-	return nil
-}
-
 func callGitHub(url string) (io.Reader, error) {
+	log.Println(url)
 	req, _ := http.NewRequest("GET", url, nil)
 	req.Header.Add("Accept", "application/vnd.github.v3+json")
 	if os.Getenv("GITHUB_TOKEN") != "" {

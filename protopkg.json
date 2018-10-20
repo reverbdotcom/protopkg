@@ -1,7 +1,0 @@
-{
-  "protos": {
-    "google/transit/gtfs-realtime/proto": {
-      "path": "protos/gtfs"
-    }
-  }
-}

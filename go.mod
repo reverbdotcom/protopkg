@@ -4,17 +4,16 @@ require (
 	9fans.net/go v0.0.0-20180727211846-5d4fa602e1e8 // indirect
 	github.com/alecthomas/gometalinter v2.0.11+incompatible // indirect
 	github.com/alecthomas/units v0.0.0-20151022065526-2efee857e7cf // indirect
-	github.com/codegangsta/cli v1.20.0
 	github.com/cosiner/argv v0.0.0-20170225145430-13bacc38a0a5 // indirect
 	github.com/davidrjenni/reftools v0.0.0-20180914123528-654d0ba4f96d // indirect
 	github.com/derekparker/delve v1.1.0 // indirect
-	github.com/emicklei/proto v1.6.5
 	github.com/fatih/gomodifytags v0.0.0-20180914191908-141225bf62b6 // indirect
 	github.com/fatih/motion v0.0.0-20180408211639-218875ebe238 // indirect
 	github.com/golang/lint v0.0.0-20181011164241-5906bd5c48cd // indirect
 	github.com/google/shlex v0.0.0-20150127133951-6f45313302b9 // indirect
 	github.com/josharian/impl v0.0.0-20180228163738-3d0f908298c4 // indirect
 	github.com/jstemmer/gotags v1.4.1 // indirect
+	github.com/jtacoma/uritemplates v1.0.0
 	github.com/kisielk/errcheck v1.1.0 // indirect
 	github.com/klauspost/asmfmt v0.0.0-20171230121622-022c51c61cbd // indirect
 	github.com/koron/iferr v0.0.0-20180615142939-bb332a3b1d91 // indirect
