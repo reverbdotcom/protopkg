@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"os"
+	"strings"
 
 	"github.com/urfave/cli"
 )
@@ -26,7 +27,7 @@ func main() {
 		{
 			Name:    "sync",
 			Aliases: []string{"s"},
-			Usage:   "pull down the protos",
+			Usage:   "pull down the protos - protopkg sync",
 			Action: func(c *cli.Context) error {
 				raw, err := ioutil.ReadFile("./protopkg.json")
 				if err != nil {
@@ -41,6 +42,67 @@ func main() {
 				}
 
 				return sync(manifest)
+			},
+		},
+		{
+			Name:    "init",
+			Aliases: []string{"i"},
+			Usage:   "creates a new protopkg.json in the current directory - protopkg init",
+			Action: func(c *cli.Context) error {
+				contents := `{
+					"protos": {
+					}
+				}`
+
+				err := ioutil.WriteFile("./protopkg.json", []byte(contents), 0644)
+				if err != nil {
+					return err
+				}
+
+				return nil
+			},
+		},
+		{
+			Name:    "add",
+			Aliases: []string{"a"},
+			Usage:   "adds a new proto dependency - protopkg add google/protos@HEAD ./protos/google",
+			Action: func(c *cli.Context) error {
+				var manifest Manifest
+
+				if _, err := os.Stat("./protopkg.json"); os.IsNotExist(err) {
+					manifest = Manifest{Deps: map[string]ProtoDep{}}
+				} else {
+					raw, err := ioutil.ReadFile("./protopkg.json")
+					if err != nil {
+						return err
+					}
+
+					err = json.Unmarshal(raw, &manifest)
+					if err != nil {
+						return err
+					}
+				}
+
+				depAndRef := strings.Split(c.Args().First(), "@")
+				target := c.Args().Get(1)
+
+				if len(depAndRef) == 2 {
+					manifest.Deps[depAndRef[0]] = ProtoDep{
+						Path: target,
+						Ref:  "HEAD",
+					}
+				} else {
+					manifest.Deps[depAndRef[0]] = ProtoDep{
+						Path: target,
+					}
+				}
+
+				contents, err := json.MarshalIndent(manifest, "", "  ")
+				if err != nil {
+					return err
+				}
+
+				return ioutil.WriteFile("./protopkg.json", contents, 0644)
 			},
 		},
 	}

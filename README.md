@@ -20,7 +20,9 @@ VERSION:
    0.0.0
 
 COMMANDS:
-     sync, s  pull down the protos
+     sync, s  pull down the protos - protopkg sync
+     init, i  creates a new protopkg.json in the current directory - protopkg init
+     add, a   adds a new proto dependency - protopkg add google/protos@HEAD ./protos/google
      help, h  Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
