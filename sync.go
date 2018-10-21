@@ -28,22 +28,22 @@ func sync(manifest Manifest) error {
 
 	for path, cfg := range manifest.Deps {
 		log.Printf("syncing %s to %s", path, cfg.Path)
-		parts := strings.SplitN(path, "/", 3)
 
-		go func() {
-			walker := &GithubWalker{
-				Repo:   strings.Join(parts[0:2], "/"),
-				Target: cfg.Path,
-				Ref:    cfg.Ref,
-			}
+		go func(p string, c ProtoDep) {
+			parts := strings.SplitN(p, "/", 3)
 
-			err := walker.Visit(parts[2])
+			err := Walk(
+				parts[2],
+				strings.Join(parts[0:2], "/"),
+				c.Path,
+				c.Ref,
+			)
 
 			if err != nil {
 				log.Printf("error! - %s", err)
 			}
 			depC <- true
-		}()
+		}(path, cfg)
 	}
 
 	for range manifest.Deps {
@@ -58,6 +58,18 @@ type GithubWalker struct {
 	Repo   string
 	Ref    string
 	Target string
+	Base   string
+}
+
+func Walk(source, repo, target, ref string) error {
+	walker := &GithubWalker{
+		Repo:   repo,
+		Target: target,
+		Ref:    ref,
+		Base:   source,
+	}
+
+	return walker.Visit(source)
 }
 
 func (w *GithubWalker) Visit(src string) error {
@@ -66,11 +78,18 @@ func (w *GithubWalker) Visit(src string) error {
 		return err
 	}
 
-	path, err := tpl.Expand(map[string]interface{}{
+	ref := w.Ref
+	if ref == "" {
+		ref = "HEAD"
+	}
+
+	params := map[string]interface{}{
 		"repo": w.Repo,
 		"file": src,
-		"ref":  w.Ref,
-	})
+		"ref":  ref,
+	}
+
+	path, err := tpl.Expand(params)
 	if err != nil {
 		return err
 	}
@@ -95,7 +114,7 @@ func (w *GithubWalker) Visit(src string) error {
 		}
 
 		if file.Type == "file" {
-			err := w.downloadFile(file)
+			err := w.downloadFile(file, src)
 			if err != nil {
 				return err
 			}
@@ -105,15 +124,22 @@ func (w *GithubWalker) Visit(src string) error {
 	return nil
 }
 
-func (w *GithubWalker) downloadFile(file GHFile) error {
+func (w *GithubWalker) downloadFile(file GHFile, base string) error {
 	resp, err := callGitHub(file.URL)
 	if err != nil {
 		return err
 	}
 
-	proto := path.Join(w.Target, file.Path)
-	os.MkdirAll(filepath.Dir(proto), os.ModePerm)
-	f, err := os.Create(proto)
+	var protoPath string
+	if filepath.Ext(w.Target) == ".proto" {
+		protoPath = w.Target
+	} else {
+		p, _ := filepath.Rel(w.Base, file.Path)
+		protoPath = path.Join(w.Target, p)
+	}
+
+	os.MkdirAll(filepath.Dir(protoPath), os.ModePerm)
+	f, err := os.Create(protoPath)
 
 	if err != nil {
 		return fmt.Errorf("could not create - %s", err)
@@ -143,7 +169,6 @@ func decodeFile(raw []byte) ([]GHFile, error) {
 }
 
 func callGitHub(url string) (io.Reader, error) {
-	log.Println(url)
 	req, _ := http.NewRequest("GET", url, nil)
 	req.Header.Add("Accept", "application/vnd.github.v3+json")
 	if os.Getenv("GITHUB_TOKEN") != "" {
@@ -151,5 +176,9 @@ func callGitHub(url string) (io.Reader, error) {
 	}
 
 	resp, err := http.DefaultClient.Do(req)
+	if resp.StatusCode != 200 {
+		return nil, fmt.Errorf("failed to fetch %s", url)
+	}
+
 	return resp.Body, err
 }
