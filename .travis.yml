@@ -1,0 +1,13 @@
+language: go
+go:
+  - 1.11
+before_deploy:
+  - make release
+  - tar cvfz binaries.tar.gz bin/* -C bin .
+deploy:
+  provider: releases
+  api_key:
+    secure: RCXEVKLRCYHZQ6ekkBwvJFgpXX6iqTVIWXln3Xl+4LYGBBHhR+FIqffJKczlEeM8TTT9CQeSTxmdOI8LJRaQ3vwHqL1aQk/mtzsw7BiE1Z2e/HdCjYtCuuB8VgVpeCR4amsE2qrU0F3kR/QmGEhetvVuorjdyTivQgCJnCzxkvjR5H0fFORim1UaRBA3TGjetSYZGcexAxHnk8vZgp0BhXVmkQkHLOVGi0+A//2u9M6bktsnaxrHzOAYAIda4X3evZkoRuuTcByfvfgWNbBGyLxpX03CGukawo2cTflvp/6ol8rDqffxn3WlUgj0+WVUon7DqQpOygroFHyPmDnDp9PQhAOO6GzLkrFxR/uVd18KmVtNtk25Waqo+KsG6xD6dDnNr4XEcI8eI8T6PgPtX79KyNbmrt/NG+Zdru1HaRcWe7FJ9DJM8gENSB1422CVq/Z1ByhSs4n7144udfHLCjMz325wrvK3Ud+7AorZ3rCmLwlP8EfR2LEFrq5348REiWNlqsXNeF01XLZF5zGIG3Lf8vVEQT+BbKWf+f4qRfF5kLuJmJxv5nIjTMYho4ZDgMEBcc65qVeOWG7JSHLSC7o8IBzE2vuES1mp+onwbLnYDuiPrv3p62MsB2UPA1l5Oz6Yg/ToTs1Sk+1xNFyOCXnJdePzulgIicnh+3k2iRY=
+  file: binaries.tar.gz
+  on:
+    tags: true
