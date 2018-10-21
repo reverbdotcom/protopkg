@@ -1,15 +1,15 @@
 language: go
 go:
-  - 1.11
+- 1.11
 env:
-  - GO111MODULE=on
+- GO111MODULE=on
 before_deploy:
-  - make release
-  - tar cvfz binaries.tar.gz bin/* -C bin .
+- make release
+- tar cvfz binaries.tar.gz bin/* -C bin .
 deploy:
   provider: releases
   api_key:
-    secure: RCXEVKLRCYHZQ6ekkBwvJFgpXX6iqTVIWXln3Xl+4LYGBBHhR+FIqffJKczlEeM8TTT9CQeSTxmdOI8LJRaQ3vwHqL1aQk/mtzsw7BiE1Z2e/HdCjYtCuuB8VgVpeCR4amsE2qrU0F3kR/QmGEhetvVuorjdyTivQgCJnCzxkvjR5H0fFORim1UaRBA3TGjetSYZGcexAxHnk8vZgp0BhXVmkQkHLOVGi0+A//2u9M6bktsnaxrHzOAYAIda4X3evZkoRuuTcByfvfgWNbBGyLxpX03CGukawo2cTflvp/6ol8rDqffxn3WlUgj0+WVUon7DqQpOygroFHyPmDnDp9PQhAOO6GzLkrFxR/uVd18KmVtNtk25Waqo+KsG6xD6dDnNr4XEcI8eI8T6PgPtX79KyNbmrt/NG+Zdru1HaRcWe7FJ9DJM8gENSB1422CVq/Z1ByhSs4n7144udfHLCjMz325wrvK3Ud+7AorZ3rCmLwlP8EfR2LEFrq5348REiWNlqsXNeF01XLZF5zGIG3Lf8vVEQT+BbKWf+f4qRfF5kLuJmJxv5nIjTMYho4ZDgMEBcc65qVeOWG7JSHLSC7o8IBzE2vuES1mp+onwbLnYDuiPrv3p62MsB2UPA1l5Oz6Yg/ToTs1Sk+1xNFyOCXnJdePzulgIicnh+3k2iRY=
+    secure: aJIehYqmEUQTN5tdRQhOvPsbgBoKvkxsJTBUfF+Hc7RPQC45z+rNNxXV99OUZm5pr7t1BUOnIIo8tZdUVsfPfWPHtFOpagmU62lojUG2PM0oCQ8CxV0HvwcFsdD4iINSN51lEVCtBZhtUEWBwoostvek1bouFKNjpzwYMRKFulvbxiLCrmi17wy+8sqkmbt+22uGyopsJtI4YrMIpW5EWYx7aHgQsvHZZEhyLDQ4EFfIBBj+53KJUHzY4/pIdasLVAOg8bADuzZ/e2AshyH5dtIQARrv00/sIhUvSx7Z1LZ0JZs+u8o3Jwsl4wQCW2X7LECApuFet4OenBPRLTjGKzP5uEK7IzPOqTqzgnOMt7/66MqaSizicbuHhwk4VCEYwP2ccEzOkNRRUngvxbyM0DbiUlpxw+qvAHrNeFNCFt1xkITgu68k+p1LsbUU0jFgbfMrVhJh2G3i9k6fx46k7n5L8vohCMv5Dc2LzemQzluYXoiDlj40HqUK57x/pXuYYpQxJMdP/lBkd3dSJSMV4CGwmOMuyHflniKW/aJ83C0JxkhhMh7yKk89YGerLoHxon5MVjz+IFhP1cUCTgxcMUjWozaua43QHwT0XTZhhDYHsMd3uddlDc9gJYyGQHzxJ094pns4XvM+ciKK79RORExbYGpQM6esJzycyhGToug=
   file: binaries.tar.gz
   on:
-    tags: true
+    repo: ebenoist/protopkg
