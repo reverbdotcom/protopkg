@@ -1,6 +1,8 @@
 language: go
 go:
   - 1.11
+env:
+  - GO111MODULE=on
 before_deploy:
   - make release
   - tar cvfz binaries.tar.gz bin/* -C bin .
