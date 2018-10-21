@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 	"path"
@@ -27,7 +26,7 @@ func sync(manifest Manifest) error {
 	depC := make(chan bool, len(manifest.Deps))
 
 	for path, cfg := range manifest.Deps {
-		log.Printf("syncing %s to %s", path, cfg.Path)
+		fmt.Printf("♻️  syncing %s to %s\n", path, cfg.Path)
 
 		go func(p string, c ProtoDep) {
 			parts := strings.SplitN(p, "/", 3)
@@ -40,7 +39,7 @@ func sync(manifest Manifest) error {
 			)
 
 			if err != nil {
-				log.Printf("error! - %s", err)
+				fmt.Printf("👎 error! - %s\n", err)
 			}
 			depC <- true
 		}(path, cfg)
@@ -50,7 +49,7 @@ func sync(manifest Manifest) error {
 		<-depC
 	}
 
-	log.Printf("finished")
+	fmt.Printf("📦 finished!\n")
 	return nil
 }
 
