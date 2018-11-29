@@ -22,7 +22,7 @@ type GHFile struct {
 
 // Sync will take the manifest and copy all of the containing proto files
 // to the target.
-func sync(manifest Manifest) error {
+func sync(manifest *Manifest) error {
 	depC := make(chan bool, len(manifest.Deps))
 
 	for path, cfg := range manifest.Deps {

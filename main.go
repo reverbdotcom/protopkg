@@ -10,12 +10,29 @@ import (
 )
 
 type ProtoDep struct {
-	Path string `json:"path"`
-	Ref  string `json:"ref"`
+	Path  string `json:"path"`
+	Ref   string `json:"ref"`
+	Local string `json:"local"`
 }
 
 type Manifest struct {
 	Deps map[string]ProtoDep `json:"protos"`
+}
+
+func parseManifest() (*Manifest, error) {
+	raw, err := ioutil.ReadFile("./protopkg.json")
+	if err != nil {
+		return nil, err
+	}
+
+	var manifest Manifest
+	err = json.Unmarshal(raw, &manifest)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &manifest, nil
 }
 
 func main() {
@@ -25,18 +42,24 @@ func main() {
 
 	app.Commands = []cli.Command{
 		{
-			Name:    "sync",
-			Aliases: []string{"s"},
-			Usage:   "pull down the protos - protopkg sync",
+			Name:    "local",
+			Aliases: []string{"l"},
+			Usage:   "sync a dependency based on the configured local path",
 			Action: func(c *cli.Context) error {
-				raw, err := ioutil.ReadFile("./protopkg.json")
+				manifest, err := parseManifest()
 				if err != nil {
 					return err
 				}
 
-				var manifest Manifest
-				err = json.Unmarshal(raw, &manifest)
-
+				return local(manifest, c.Args().First())
+			},
+		},
+		{
+			Name:    "sync",
+			Aliases: []string{"s"},
+			Usage:   "pull down the protos - protopkg sync",
+			Action: func(c *cli.Context) error {
+				manifest, err := parseManifest()
 				if err != nil {
 					return err
 				}

@@ -20,10 +20,11 @@ VERSION:
    0.0.0
 
 COMMANDS:
-     sync, s  pull down the protos - protopkg sync
-     init, i  creates a new protopkg.json in the current directory - protopkg init
-     add, a   adds a new proto dependency - protopkg add google/protos@HEAD ./protos/google
-     help, h  Shows a list of commands or help for one command
+     local, l  sync a dependency based on the configured local path
+     sync, s   pull down the protos - protopkg sync
+     init, i   creates a new protopkg.json in the current directory - protopkg init
+     add, a    adds a new proto dependency - protopkg add google/protos@HEAD ./protos/google
+     help, h   Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
    --help, -h     show help
@@ -36,7 +37,8 @@ GLOBAL OPTIONS:
   "protos": {
     "google/transit/gtfs-realtime/proto": {
       "path": "protos/gtfs",
-      "ref": "db3c001d0c2412825c6911628ded36c583e60f95"
+      "ref": "db3c001d0c2412825c6911628ded36c583e60f95",
+      "local": "../a-local-path"
     }
   }
 }
