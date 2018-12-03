@@ -40,6 +40,9 @@ func sync(manifest *Manifest) error {
 
 			if err != nil {
 				fmt.Printf("👎 error! - %s\n", err)
+				if os.Getenv("GITHUB_TOKEN") == "" {
+					fmt.Printf("💡you don't have a GITHUB_TOKEN set, that may be the issue: https://github.com/reverbdotcom/protopkg#private-repositories")
+				}
 			}
 			depC <- true
 		}(path, cfg)
