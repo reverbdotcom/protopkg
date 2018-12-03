@@ -4,9 +4,9 @@
 A declarative protocol buffer package manager. protopkg helps synchronize protocol buffers across multiple repositories. A `protopkg.json` file will be read in the current working directory and protocol buffer directories (or single files) will be pulled from github and copied to the desired path.
 
 ## Installation
-Homebrew: `brew tap ebenoist/ebenoist && brew install protopkg`
+Homebrew: `brew tap reverbdotcom/reverb && brew install protopkg`
 
-With Go 1.11: `go get -u github.com/ebenoist/protopkg`
+With Go 1.11: `go get -u github.com/reverbdotcom/protopkg`
 
 ## Usage
 ```
