@@ -8,6 +8,11 @@ Homebrew: `brew tap reverbdotcom/reverb && brew install protopkg`
 
 With Go 1.11: `go get -u github.com/reverbdotcom/protopkg`
 
+## Private Repositories
+`protopkg` will make authorized calls to the public github API if the environment variable `GITHUB_TOKEN` is present. Ensure that this token has access to read the given repositories referenced in your `protopkg.json`
+
+https://blog.github.com/2013-05-16-personal-api-tokens/
+
 ## Usage
 ```
 NAME:
@@ -44,5 +49,3 @@ GLOBAL OPTIONS:
 }
 ```
 
-## Private Repositories
-`protopkg` will make authorized calls to the public github API if the environment variable `GITHUB_TOKEN` is present. Ensure that this token has access to read the given repositories referenced in your `protopkg.json`
