@@ -20,14 +20,6 @@ type GHFile struct {
 	URL  string `json:"download_url"`
 }
 
-func getToken() string {
-	if os.Getenv("GITHUB_TOKEN") == "" {
-		return os.Getenv("GITHUB_PACKAGE_PULL_TOKEN")
-	}
-
-	return os.Getenv("GITHUB_TOKEN")
-}
-
 // Sync will take the manifest and copy all of the containing proto files
 // to the target.
 func sync(manifest *Manifest) error {
@@ -49,7 +41,7 @@ func sync(manifest *Manifest) error {
 			if err != nil {
 				fmt.Printf("👎 error! - %s\n", err)
 				if getToken() == "" {
-					fmt.Printf("💡you don't have a GITHUB_TOKEN or GITHUB_PACKAGE_PULL_TOKEN set, that may be the issue: https://github.com/reverbdotcom/protopkg#private-repositories")
+					fmt.Printf("💡you don't have a token set in your config, that may be the issue: https://github.com/reverbdotcom/protopkg#private-repositories")
 				}
 			}
 			depC <- true

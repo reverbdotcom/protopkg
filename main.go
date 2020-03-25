@@ -42,6 +42,14 @@ func main() {
 
 	app.Commands = []cli.Command{
 		{
+			Name:    "token",
+			Aliases: []string{"t"},
+			Usage:   "set your GitHub token for pulling from private repositories",
+			Action: func(c *cli.Context) error {
+				return setToken(c.Args().First())
+			},
+		},
+		{
 			Name:    "local",
 			Aliases: []string{"l"},
 			Usage:   "sync a dependency based on the configured local path",
