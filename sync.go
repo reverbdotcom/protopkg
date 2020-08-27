@@ -40,8 +40,8 @@ func sync(manifest *Manifest) error {
 
 			if err != nil {
 				fmt.Printf("👎 error! - %s\n", err)
-				if os.Getenv("GITHUB_TOKEN") == "" {
-					fmt.Printf("💡you don't have a GITHUB_TOKEN set, that may be the issue: https://github.com/reverbdotcom/protopkg#private-repositories")
+				if getToken() == "" {
+					fmt.Printf("💡you don't have a token set in your config, that may be the issue: https://github.com/reverbdotcom/protopkg#private-repositories")
 				}
 			}
 			depC <- true
@@ -173,8 +173,8 @@ func decodeFile(raw []byte) ([]GHFile, error) {
 func callGitHub(url string) (io.Reader, error) {
 	req, _ := http.NewRequest("GET", url, nil)
 	req.Header.Add("Accept", "application/vnd.github.v3+json")
-	if os.Getenv("GITHUB_TOKEN") != "" {
-		req.Header.Add("Authorization", fmt.Sprintf("token %s", os.Getenv("GITHUB_TOKEN")))
+	if getToken() != "" {
+		req.Header.Add("Authorization", fmt.Sprintf("token %s", getToken()))
 	}
 
 	resp, err := http.DefaultClient.Do(req)
