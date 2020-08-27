@@ -27,15 +27,27 @@ func setToken(token string) error {
 	return ioutil.WriteFile(config, []byte(contents), 0644)
 }
 
+func fallbackToken() string {
+	if token := os.Getenv("GITHUB_PACKAGE_PULL_TOKEN"); token != "" {
+		return token
+	}
+
+	if token := os.Getenv("GITHUB_TOKEN"); token != "" {
+		return token
+	}
+
+	return ""
+}
+
 func getToken() string {
 	config, err := configPath()
 	if err != nil {
-		return ""
+		return fallbackToken()
 	}
 
 	contents, err := ioutil.ReadFile(config)
 	if err != nil {
-		return ""
+		return fallbackToken()
 	}
 
 	if string(contents) != "" {
@@ -45,5 +57,5 @@ func getToken() string {
 		}
 	}
 
-	return ""
+	return fallbackToken()
 }
