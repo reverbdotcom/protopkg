@@ -1,0 +1,30 @@
+on:
+  release:
+    types:
+      - created
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '1.13.15'
+      - name: Install make
+        run: sudo apt-get update && sudo apt-get install make -y
+      - name: Build Binaries
+        run: |
+          make release
+          tar cvfz binaries.tar.gz bin/* -C bin .
+          ls -la
+      - name: Upload Binaries to Release
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./binaries.tar.gz
+          asset_name: binaries.tar.gz
+          asset_content_type: application/gzip
