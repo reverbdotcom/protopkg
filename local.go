@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"log"
-	"os/exec"
 	"strings"
+	cp "github.com/otiai10/copy"
 )
 
 func local(manifest *Manifest, name string) error {
@@ -32,8 +32,7 @@ func local(manifest *Manifest, name string) error {
 
 	log.Printf("dep %+v", dep)
 
-	cmd := exec.Command("cp", "-r", dep.Local, dep.Path)
-	err := cmd.Run()
+	err := cp.Copy(dep.Local, dep.Path)
 	if err != nil {
 		return fmt.Errorf("could not perform a local sync of %s because %s", name, err)
 	}
